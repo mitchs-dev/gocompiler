@@ -1,7 +1,12 @@
 # gocompiler
 
-This is a docker image which can be used to compile GO binaries for multiple OS's. This image is based on the official `golang` image. Currently this image only supports GO `1.19.1`.
+This is a docker image which can be used to compile GO binaries for multiple OS's. This image is based on the official `golang` image.
 
+> **IMPORTANT**: This image has previously gone through an overhaul. If you previously used a `1.0.0` version of this image, please be aware that the new tags are going to reflect the version of GO that is being used. (I.e `1.23.3`)
+
+## Supported Versions
+
+This image will follow the GO Release Policy and will support the last 3 minor versions of GO: https://go.dev/doc/devel/release#policy
 
 ## How to use
 
