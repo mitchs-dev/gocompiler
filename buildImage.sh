@@ -10,6 +10,7 @@ set -e
 build_image() {
   local imageVersion=$1
   local isLatest=$2
+  local pushFlag=$3
 
   # Extract major, minor, and patch versions
   IFS='.' read -r major minor patch <<< "$imageVersion"
@@ -41,12 +42,13 @@ build_image() {
     exit 0
   fi
   
-  if [[ "$3" == "--push" ]]; then
+  if [[ "$pushFlag" == "--push" ]]; then
     echo "Pushing GO Compiler to $registry"
-    docker push $registry/$imageRepo/$imageName:$imageVersion && \
-    docker push $registry/$imageRepo/$imageName:$imageVersion-cgo && \
-    $( [ "$isLatest" == "true" ] && echo "docker push $registry/$imageRepo/$imageName:latest && docker push $registry/$imageRepo/$imageName:latest-cgo" ) && \
+    echo docker push $registry/$imageRepo/$imageName:$imageVersion && \
+    echo docker push $registry/$imageRepo/$imageName:$imageVersion-cgo && \
     echo "Successfully pushed GO Compiler for version $imageVersion to $registry"
+    docker push $registry/$imageRepo/$imageName:latest && \
+    docker push $registry/$imageRepo/$imageName:latest-cgo
   else
     echo "Skipping push to $registry/$imageRepo"
   fi
@@ -87,4 +89,4 @@ done < $supportedVersionFile
 num_cores=$(($(nproc) / 2))
 
 # Run the builds in parallel with progress tracking and limited concurrency
-parallel --jobs $num_cores --bar --colsep ' ' build_image ::: "${versions[@]}"
+parallel --jobs $num_cores --bar --colsep ' ' build_image ::: "${versions[@]}" ::: "$@"
